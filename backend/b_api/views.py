@@ -1,6 +1,8 @@
 import json
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
+@api_view(['GET'])
 def api_home(request, *args, **kwargs):
     data = {}
     
@@ -13,4 +15,4 @@ def api_home(request, *args, **kwargs):
     data['headers'] = dict(request.headers)
     data['content_type'] = request.content_type
 
-    return JsonResponse(data)
+    return Response(data)
