@@ -1,9 +1,10 @@
 import requests
 
-endpoint = "https://httpbin.org/anything"
+endpoint = "http://localhost:8000/api/v1/"
 
-response = requests.get(endpoint, json={"query": "Hello, world!"})
+response = requests.get(endpoint)
 
-print(response.json())
+print(response.text)
+print("STATUS CODE:", response.status_code)
 
 
