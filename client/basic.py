@@ -9,7 +9,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # Use context manager to ensure file is properly closed
 with open(os.path.join(script_dir, "firefox_logo_2019.png"), "rb") as image_file:
     response = requests.post(endpoint, files={
-        "file": image_file
+        "image": image_file
     })
 
 print(response.json())

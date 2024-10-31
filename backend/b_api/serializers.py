@@ -1,20 +1,23 @@
 from rest_framework import serializers
+from .models import Document
 
-class ImageUploadSerializer(serializers.Serializer):
-    file = serializers.ImageField()
+class ImageUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ['id', 'image', 'uploaded_at']
 
     # Optional: Custom validation to ensure it's an image
-    def validate_file(self, value):
+    def validate_image(self, value):
         """
-        Field-level validation for 'file' field.
-        Called automatically for the 'file' field.
+        Field-level validation for 'image' field.
+        Called automatically for the 'image' field.
         """
         if not value.content_type.startswith("image"):
             raise serializers.ValidationError("Uploaded file is not an image.")
         
         # You can access file properties:
-        print(f"File size: {value.size} bytes")
+        print(f"Image size: {value.size} bytes")
         print(f"Content type: {value.content_type}")
-        print(f"File name: {value.name}")
-        
+        print(f"Image name: {value.name}")
+
         return value

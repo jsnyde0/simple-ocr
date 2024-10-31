@@ -8,11 +8,13 @@ def api_home(request, *args, **kwargs):
     serializer = ImageUploadSerializer(data=request.data)
 
     if serializer.is_valid(raise_exception=True):
-        image = serializer.validated_data['file']
+        document = serializer.save()
         return Response({
-            'image_name': image.name,
-            'image_size': image.size,
-            'content_type': image.content_type
+            'id': document.id,
+            'image_name': document.image.name,
+            'image_size': document.image.size,
+            'image_url': document.image.url,
+            'uploaded_at': document.uploaded_at,
         }, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
