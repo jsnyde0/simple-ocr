@@ -12,7 +12,7 @@ with open(os.path.join(script_dir, "firefox_logo_2019.png"), "rb") as image_file
         "file": image_file
     })
 
-print(response)
+print(response.json())
 print("STATUS CODE:", response.status_code)
 
 
