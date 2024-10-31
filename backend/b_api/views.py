@@ -1,18 +1,14 @@
-import json
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
+from .serializers import ImageUploadSerializer
 
-@api_view(['GET'])
+@api_view(['POST'])
 def api_home(request, *args, **kwargs):
-    data = {}
-    
-    try:
-        data = json.loads(request.body) # JSON.loads() converts JSON string to Python dictionary
-    except:
-        pass
+    serializer = ImageUploadSerializer(data=request.data)
 
-    data['url_params'] = dict(request.GET)
-    data['headers'] = dict(request.headers)
-    data['content_type'] = request.content_type
-
-    return Response(data)
+    if serializer.is_valid(raise_exception=True):
+        uploaded_image = serializer.validated_data['file']
+        return Response(f'Image uploaded successfully: {uploaded_image.name}', status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

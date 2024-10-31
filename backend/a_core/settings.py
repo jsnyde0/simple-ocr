@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from environ import Env
+import logging
 
 env = Env(
     ENVIRONMENT=(str, 'development'),
@@ -36,6 +37,29 @@ if ENVIRONMENT == 'development':
     DEBUG = True
 else:
     DEBUG = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # Configure logging for your app only
+        'your_app_name': {  # Replace with your app’s name
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Show debug logs for your app
+            'propagate': False,
+        },
+        # Suppress other libraries' debug logs
+        '': {  # Root logger for everything else
+            'handlers': ['console'],
+            'level': 'WARNING',  # Show only warnings and above for all other modules
+        },
+    },
+}
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 

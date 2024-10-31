@@ -1,10 +1,18 @@
 import requests
+import os
 
 endpoint = "http://localhost:8000/api/v1/"
 
-response = requests.get(endpoint, params={"url_param": "test"}, json={"json_data": "test"})
+# Get the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-print(response.json())
+# Use context manager to ensure file is properly closed
+with open(os.path.join(script_dir, "firefox_logo_2019.png"), "rb") as image_file:
+    response = requests.post(endpoint, files={
+        "file": image_file
+    })
+
+print(response)
 print("STATUS CODE:", response.status_code)
 
 
