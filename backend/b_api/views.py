@@ -15,10 +15,11 @@ def api_home(request, *args, **kwargs):
                 'error': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         
+
         image_file = serializer.validated_data['image']
         image = Image.open(image_file)
-
         extracted_text = pytesseract.image_to_string(image)
+        
         return Response({
             'text': extracted_text,
             'status': 'success'

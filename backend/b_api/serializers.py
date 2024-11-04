@@ -1,19 +1,15 @@
 from rest_framework import serializers
 
 class ImageUploadSerializer(serializers.Serializer):
-    image = serializers.ImageField()
+    image = serializers.ImageField(
+        error_messages={
+            'invalid': "Please upload a valid image file.",
+            'required': "An image file is required."
+        }
+    )
 
-    # Optional: Custom validation to ensure it's an image
     def validate_image(self, value):
-        """
-        Field-level validation for 'image' field.
-        """
-        if not value.content_type.startswith("image"):
-            raise serializers.ValidationError("Uploaded file is not an image.")
-        
-        # You can access file properties:
-        print(f"Image size: {value.size} bytes")
-        print(f"Content type: {value.content_type}")
-        print(f"Image name: {value.name}")
-
+        """Optional: Add specific size/dimension validation if needed"""
+        if value.size > 5 * 1024 * 1024:  # 5MB
+            raise serializers.ValidationError("Image file too large ( > 5MB )")
         return value
