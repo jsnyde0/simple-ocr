@@ -1,16 +1,12 @@
 from rest_framework import serializers
-from .models import Document
 
-class ImageUploadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Document
-        fields = ['id', 'image', 'uploaded_at']
+class ImageUploadSerializer(serializers.Serializer):
+    image = serializers.ImageField()
 
     # Optional: Custom validation to ensure it's an image
     def validate_image(self, value):
         """
         Field-level validation for 'image' field.
-        Called automatically for the 'image' field.
         """
         if not value.content_type.startswith("image"):
             raise serializers.ValidationError("Uploaded file is not an image.")
