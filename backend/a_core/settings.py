@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from environ import Env
 import os
+import sys
 
 env = Env(
     ENVIRONMENT=(str, 'development'),
@@ -48,9 +49,14 @@ LOGGING = {
     },
     'loggers': {
         # Configure logging for your app only
-        'your_app_name': {  # Replace with your app’s name
+        'b_api': {  # Replace with your app’s name
             'handlers': ['console'],
             'level': 'DEBUG',  # Show debug logs for your app
+            'propagate': False,
+        },
+        'django.request': {  # Add this logger
+            'handlers': ['console'],
+            'level': 'WARNING',
             'propagate': False,
         },
         # Suppress other libraries' debug logs
@@ -60,6 +66,9 @@ LOGGING = {
         },
     },
 }
+
+if 'test' in sys.argv:
+    LOGGING['loggers']['django.request']['level'] = 'ERROR'
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
