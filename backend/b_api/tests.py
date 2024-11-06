@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from rest_framework import status
 from PIL import Image
@@ -36,6 +38,9 @@ class ImageUploadSerializerTests(TestCase):
 
 class OCRAPIViewTests(APITestCase):
     def setUp(self):
+        # set up user and token
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.token = Token.objects.create(user=self.user)
         # Create a test image with known text
         self.test_image_path = os.path.join(
             os.path.dirname(__file__),
@@ -46,11 +51,17 @@ class OCRAPIViewTests(APITestCase):
     def test_successful_ocr(self):
         """Test successful OCR processing"""
         url = reverse('api:api_home')
+        headers = {
+            'Authorization': f'Token {self.token.key}'
+        }
         
         with open(self.test_image_path, 'rb') as image_file:
-            response = self.client.post(url, {
-                'image': image_file
-            }, format='multipart')
+            response = self.client.post(
+                url,
+                {'image': image_file},
+                format='multipart',
+                headers=headers
+            )
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('text', response.data)
@@ -60,6 +71,9 @@ class OCRAPIViewTests(APITestCase):
     def test_invalid_file_upload(self):
         """Test uploading an invalid file"""
         url = reverse('api:api_home')
+        headers = {
+            'Authorization': f'Token {self.token.key}'
+        }
         
         invalid_file = SimpleUploadedFile(
             "file.txt",
@@ -67,8 +81,11 @@ class OCRAPIViewTests(APITestCase):
             content_type="text/plain"
         )
         
-        response = self.client.post(url, {
-            'image': invalid_file
-        }, format='multipart')
+        response = self.client.post(
+            url,
+            {'image': invalid_file},
+            format='multipart',
+            headers=headers
+        )
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
