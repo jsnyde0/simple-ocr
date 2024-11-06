@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-endpoint = "http://localhost:8000/api/v1/image/"
+endpoint = "http://localhost:8000/api/v1/images/"
 headers = {
     'Authorization': f"Token {os.getenv('API_TOKEN')}"
 }
@@ -21,7 +21,7 @@ with open(os.path.join(script_dir, "tesseract-example-noisy.png"), "rb") as imag
     )
 
 print("OCR Image created: \n", response.json())
-print("STATUS CODE:", response.status_code)
+print("STATUS CODE:", response.status_code, "\n-------------------")
 
 print(f"Getting details from {endpoint + str(response.json()['id'])}")
 
@@ -31,6 +31,17 @@ response = requests.get(
 )
 
 print("OCR Image details: \n", response.json())
+print("STATUS CODE:", response.status_code, "\n-------------------")
+
+print(f"Getting results from {response.json()['result_url']}")
+
+response = requests.get(
+    response.json()['result_url'],
+    headers=headers
+)
+
+print("OCR Image results: \n", response.json())
+print("STATUS CODE:", response.status_code, "\n-------------------")
 
 
 

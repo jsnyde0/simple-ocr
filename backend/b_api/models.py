@@ -24,3 +24,6 @@ class OCRImage(models.Model):
     def __str__(self):
         return f"OCR Image {self.id} by {self.user.username}"
 
+    class Meta:
+        ordering = ['-uploaded_at']
+
