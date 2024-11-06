@@ -20,7 +20,17 @@ with open(os.path.join(script_dir, "tesseract-example-noisy.png"), "rb") as imag
         headers=headers
     )
 
-print("OCR Results: \n", response.json())
+print("OCR Image created: \n", response.json())
 print("STATUS CODE:", response.status_code)
+
+print(f"Getting details from {endpoint + str(response.json()['id'])}")
+
+response = requests.get(
+    endpoint + str(response.json()['id']),
+    headers=headers
+)
+
+print("OCR Image details: \n", response.json())
+
 
 

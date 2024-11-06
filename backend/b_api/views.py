@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from .models import OCRImage
 from .serializers import OCRImageCreateSerializer, OCRImageDetailSerializer, OCRResultSerializer
 from PIL import Image
 import pytesseract
@@ -19,7 +20,7 @@ def image_create(request, *args, **kwargs):
                 {'error': serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         ocr_image = serializer.save(user=request.user)
         
         ocr_image.text = pytesseract.image_to_string(Image.open(ocr_image.image))
@@ -37,3 +38,15 @@ def image_create(request, *args, **kwargs):
         return Response({
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def image_detail(request, id, *args, **kwargs):
+    try:
+        ocr_image = OCRImage.objects.get(id=id, user=request.user)
+        serializer = OCRImageDetailSerializer(ocr_image)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except OCRImage.DoesNotExist:
+        return Response({'error': 'OCR Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
