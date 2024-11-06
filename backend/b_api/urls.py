@@ -20,5 +20,7 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
-    path('', views.api_home, name='api_home'),
+    path('image/', views.image_create, name='image_create'),
+    # path('image/<int:pk>/', views.image_detail, name='image_detail'),
+    # path('image/<int:pk>/result/', views.image_result, name='image_result'),
 ]
