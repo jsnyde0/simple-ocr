@@ -21,18 +21,18 @@ class ImageUploadSerializerTests(TestCase):
             content_type="image/png"
         )
 
-    def test_valid_image_upload(self):
-        from .serializers import ImageUploadSerializer
+    def test_valid_image_serializer(self):
+        from .serializers import OCRImageCreateSerializer
         
-        serializer = ImageUploadSerializer(data={
+        serializer = OCRImageCreateSerializer(data={
             'image': self.image_file
         })
         self.assertTrue(serializer.is_valid())
 
-    def test_no_image_upload(self):
-        from .serializers import ImageUploadSerializer
+    def test_invalid_image_serializer(self):
+        from .serializers import OCRImageCreateSerializer
         
-        serializer = ImageUploadSerializer(data={})
+        serializer = OCRImageCreateSerializer(data={})
         self.assertFalse(serializer.is_valid())
         self.assertIn('image', serializer.errors)
 
@@ -48,9 +48,9 @@ class OCRAPIViewTests(APITestCase):
             'tesseract-example-noisy.png'
         )
         
-    def test_successful_ocr(self):
-        """Test successful OCR processing"""
-        url = reverse('api:api_home')
+    def test_image_create(self):
+        """Test successful image creation"""
+        url = reverse('api:image_create')
         headers = {
             'Authorization': f'Token {self.token.key}'
         }
@@ -63,14 +63,14 @@ class OCRAPIViewTests(APITestCase):
                 headers=headers
             )
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('text', response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('result_url', response.data)
         self.assertIn('status', response.data)
-        self.assertEqual(response.data['status'], 'success')
+        self.assertNotEqual(response.data['status'], 'failed')
 
-    def test_invalid_file_upload(self):
+    def test_invalid_image_create(self):
         """Test uploading an invalid file"""
-        url = reverse('api:api_home')
+        url = reverse('api:image_create')
         headers = {
             'Authorization': f'Token {self.token.key}'
         }
