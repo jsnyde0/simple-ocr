@@ -14,6 +14,19 @@ class OCRImageCreateSerializer(serializers.ModelSerializer):
         return value
 
 class OCRImageDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the OCRImage model's details.
+    """
+    self_url = serializers.HyperlinkedIdentityField(
+        view_name='api:image_get_delete',
+        lookup_field='id',
+        lookup_url_kwarg='id'
+    )
+    delete_url = serializers.HyperlinkedIdentityField(
+        view_name='api:image_get_delete',
+        lookup_field='id',
+        lookup_url_kwarg='id'
+    )
     result_url = serializers.HyperlinkedIdentityField(
         view_name='api:image_result',
         lookup_field='id',
@@ -21,7 +34,7 @@ class OCRImageDetailSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = OCRImage
-        fields = ['id', 'status', 'uploaded_at', 'completed_at', 'result_url']
+        fields = ['id', 'status', 'uploaded_at', 'completed_at', 'self_url', 'delete_url', 'result_url']
         read_only_fields = fields
 
 class OCRResultSerializer(serializers.ModelSerializer):

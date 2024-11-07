@@ -47,7 +47,7 @@ def image_create(request, *args, **kwargs):
 @api_view(['GET', 'DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def image_detail(request, id, *args, **kwargs):
+def image_get_delete(request, id, *args, **kwargs):
     """
     GET: Retrieve an OCR image
     DELETE: Remove an OCR image

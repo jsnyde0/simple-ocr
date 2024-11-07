@@ -21,6 +21,6 @@ app_name = 'api'
 
 urlpatterns = [
     path('images/', views.image_create, name='image_create'),
-    path('images/<int:id>/', views.image_detail, name='image_detail'),
+    path('images/<int:id>/', views.image_get_delete, name='image_get_delete'),
     path('images/<int:id>/result/', views.image_result, name='image_result'),
 ]
