@@ -8,6 +8,7 @@ from .serializers import OCRImageCreateSerializer, OCRImageDetailSerializer, OCR
 from PIL import Image
 import pytesseract
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -52,10 +53,7 @@ def image_get_delete(request, id, *args, **kwargs):
     GET: Retrieve an OCR image
     DELETE: Remove an OCR image
     """
-    try:
-        ocr_image = OCRImage.objects.get(id=id, user=request.user)
-    except OCRImage.DoesNotExist:
-        return Response({'error': 'OCR Image not found'}, status=status.HTTP_404_NOT_FOUND)
+    ocr_image = get_object_or_404(OCRImage, id=id, user=request.user)
 
     if request.method == 'DELETE':
         ocr_image.delete()
@@ -70,10 +68,6 @@ def image_get_delete(request, id, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def image_result(request, id, *args, **kwargs):
-    try:
-        ocr_image = OCRImage.objects.get(id=id, user=request.user)
-        serializer = OCRResultSerializer(ocr_image)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except OCRImage.DoesNotExist:
-        return Response({'error': 'OCR Image not found'}, status=status.HTTP_404_NOT_FOUND)
-
+    ocr_image = get_object_or_404(OCRImage, id=id, user=request.user)
+    serializer = OCRResultSerializer(ocr_image)
+    return Response(serializer.data, status=status.HTTP_200_OK)
