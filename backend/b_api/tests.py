@@ -64,6 +64,8 @@ class OCRAPIViewTests(APITestCase):
             )
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('self_url', response.data)
+        self.assertIn('delete_url', response.data)
         self.assertIn('result_url', response.data)
         self.assertIn('status', response.data)
         self.assertNotEqual(response.data['status'], 'failed')
