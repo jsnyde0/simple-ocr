@@ -44,17 +44,27 @@ def image_create(request, *args, **kwargs):
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['GET'])
+@api_view(['GET', 'DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def image_detail(request, id, *args, **kwargs):
+    """
+    GET: Retrieve an OCR image
+    DELETE: Remove an OCR image
+    """
     try:
         ocr_image = OCRImage.objects.get(id=id, user=request.user)
-        serializer = OCRImageDetailSerializer(ocr_image, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
     except OCRImage.DoesNotExist:
         return Response({'error': 'OCR Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'DELETE':
+        ocr_image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'GET':
+        serializer = OCRImageDetailSerializer(ocr_image, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
